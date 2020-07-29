@@ -1,5 +1,10 @@
 import tkinter as tk
 
+from src.camera import camera_provider
+
+import logging
+logger = logging.getLogger(__name__)
+
 
 class PhotoFrame(tk.Frame):
     """
@@ -7,6 +12,8 @@ class PhotoFrame(tk.Frame):
     """
 
     def __init__(self, master=None):
+        self.camera = camera_provider()
+
         super().__init__(master)
         self.master = master
 
@@ -19,10 +26,12 @@ class PhotoFrame(tk.Frame):
         tk.Button(self.btn_frame, text='Take Photo', command=self.take_photo).grid(row=1, column=3)
 
     def preview_on(self):
-        print('Preview - ON')
+        logger.info('Preview - ON')
+        self.camera.on()
 
     def preview_off(self):
-        print('Preview - OFF')
+        logger.info('Preview - OFF')
+        self.camera.off()
 
     def take_photo(self):
-        print('Snap!')
+        logger.info('Snap!')

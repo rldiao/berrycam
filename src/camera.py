@@ -1,15 +1,18 @@
-try:
-    from picamera import PiCamera
-except ModuleNotFoundError as e:
-    print(e)
+from picamera import PiCamera
+from dependency_injector import providers
+
+from src.errors.camera import CameraClosedError
 
 
 class PiCameraWrapper:
-    camera = None
+    """
+    Singleton PiCamera Wrapper 
+    """
 
-    def __init__(self, camera):
-        if PiCameraWrapper.camera is None:
-            PiCameraWrapper.camera = camera
+    def __init__(self, camera: PiCamera):
+        if camera.closed:
+            raise CameraClosedError("Trying to initialise PiCameraWrapper with closed camera")
+        self.camera = camera
 
     def on(self):
         print('Turning on camera...')
@@ -21,3 +24,15 @@ class PiCameraWrapper:
     def off(self):
         print('Turning off camera...')
         self.camera.stop_preview()
+
+
+camera_provider = providers.Singleton(PiCameraWrapper)
+
+# TODO: Turn this into unit test
+# # Retrieving several UserService objects:
+# camera_handler_provider1 = camera_handler_provider()
+# camera_handler_provider2 = camera_handler_provider()
+
+
+# # Making some asserts:
+# assert camera_handler_provider1 is camera_handler_provider2

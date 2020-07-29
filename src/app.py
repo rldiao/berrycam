@@ -1,28 +1,22 @@
-from time import sleep
 import tkinter as tk
+from picamera import PiCamera
 
-try:
-    from picamera import PiCamera
-except ModuleNotFoundError as e:
-    print(e)
-
-from src.camera import PiCameraWrapper
 from src.views.index import Index
+from src.camera import camera_provider
 
+import logging
+logger = logging.getLogger(__name__)
 
 class BerryCam:
-    
-    def __init__(self, camera):
-        # self.camera = PiCameraWrapper(camera)
-        pass
-
     def run(self):
-        print('Running BerryCam...')
-        root_window = tk.Tk()
-        index = Index(master=root_window)
-        index.mainloop()
+        logger.info('Running BerryCam...')
+        with PiCamera() as pc:
+            camera_provider(pc)
+            root_window = tk.Tk()
+            index = Index(master=root_window)
+            index.mainloop()
 
 
 if __name__ == '__main__':
-    app = BerryCam(None)
+    app = BerryCam()
     app.run()
