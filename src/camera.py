@@ -37,8 +37,6 @@ class PiCameraWrapper:
         logger.info('Capturing photo - ')
         self.__camera.capture(filename)
 
-    def 
-
 
 camera_provider = providers.Singleton(PiCameraWrapper)
 
