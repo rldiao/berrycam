@@ -1,7 +1,11 @@
 from picamera import PiCamera
 from dependency_injector import providers
+from datetime import datetime
 
 from src.errors.camera import CameraClosedError
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 class PiCameraWrapper:
@@ -12,18 +16,28 @@ class PiCameraWrapper:
     def __init__(self, camera: PiCamera):
         if camera.closed:
             raise CameraClosedError("Trying to initialise PiCameraWrapper with closed camera")
-        self.camera = camera
+        self.__camera = camera
 
-    def on(self):
-        print('Turning on camera...')
-        self.camera.preview_fullscreen = False
-        self.camera.preview_window = (90, 100, 320, 240)
-        self.camera.resolution = (640, 480)
-        self.camera.start_preview()
+        self.photo_dir = '/home/pi/projects/berrycam/photos'
 
-    def off(self):
-        print('Turning off camera...')
-        self.camera.stop_preview()
+    def preview_on(self):
+        logger.info('Camera Preview - ON')
+        self.__camera.preview_fullscreen = False
+        self.__camera.preview_window = (90, 100, 320, 240)
+        self.__camera.resolution = (640, 480)
+        self.__camera.start_preview()
+
+    def preview_off(self):
+        logger.info('Camera Preview - OFF')
+        self.__camera.stop_preview()
+
+    def capture(self):
+        # TODO: Set extension, photo_dir, naming
+        filename = '{path}/{filename}.jpeg'.format(path=self.photo_dir, filename=datetime.now())
+        logger.info('Capturing photo - ')
+        self.__camera.capture(filename)
+
+    def 
 
 
 camera_provider = providers.Singleton(PiCameraWrapper)
