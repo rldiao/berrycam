@@ -1,24 +1,62 @@
+import os
 from picamera import PiCamera
 from dependency_injector import providers
 from datetime import datetime
 
-from src.errors.camera import CameraClosedError
+from src.errors.camera import CameraClosedError, CameraFormatError
 
 import logging
 logger = logging.getLogger(__name__)
 
 
-class PiCameraWrapper:
+class _PiCameraWrapper:
     """
-    Singleton PiCamera Wrapper 
+    Private Class PiCamera Wrapper. Controls operations of PiCamera. Should be Singleton
     """
 
-    def __init__(self, camera: PiCamera):
+    def __init__(self, camera: PiCamera, save_directory=None):
         if camera.closed:
-            raise CameraClosedError("Trying to initialise PiCameraWrapper with closed camera")
+            raise CameraClosedError(
+                "Trying to initialise _PiCameraWrapper with closed camera")
         self.__camera = camera
 
-        self.photo_dir = '/home/pi/projects/berrycam/photos'
+        self.save_directory = save_directory
+        self.image_format = 'jpeg'
+
+    @property
+    def closed(self):
+        return self.__camera.closed
+
+    @property
+    def save_directory(self):
+        return self._save_directory
+
+    @save_directory.setter
+    def save_directory(self, save_directory=None):
+        """Set where videos and photos are saved on Pi. Default to user Desktop
+
+        Args:
+            save_directory (string): String to save directory
+        """
+        if save_directory is None:
+            self._save_directory = os.path.join(
+                os.environ['HOME'], 'Desktop', 'BerryCam')
+            if not os.path.exists(self._save_directory):
+                os.makedirs(self._save_directory)
+        else:
+            self._save_directory = save_directory
+
+        logger.debug('Save directory - {}'.format(self._save_directory))
+
+    @property
+    def image_format(self):
+        return self._image_format
+
+    @image_format.setter
+    def image_format(self, image_format):
+        if image_format not in ['jpeg', 'png', 'gif', 'bmp', 'yuv', 'rgb', 'rgba', 'bgr', 'bgra']:
+            raise CameraFormatError('{} not supported'.format(image_format))
+        self._image_format = image_format
 
     def preview_on(self):
         logger.info('Camera Preview - ON')
@@ -32,13 +70,15 @@ class PiCameraWrapper:
         self.__camera.stop_preview()
 
     def capture(self):
-        # TODO: Set extension, photo_dir, naming
-        filename = '{path}/{filename}.jpeg'.format(path=self.photo_dir, filename=datetime.now())
-        logger.info('Capturing photo - ')
-        self.__camera.capture(filename)
+        # TODO: Customisable naming
+        output = '{path}/{filename}.{format}'.format(path=self.save_directory,
+                                                     filename=datetime.now(),
+                                                     format=self.image_format)
+        logger.info('Capturing photo and saving to {}'.format(output))
+        self.__camera.capture(output, format=self.image_format)
 
 
-camera_provider = providers.Singleton(PiCameraWrapper)
+camera_provider = providers.Singleton(_PiCameraWrapper)
 
 # TODO: Turn this into unit test
 # # Retrieving several UserService objects:

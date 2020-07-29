@@ -17,6 +17,8 @@ class BerryCam:
             index = Index(master=root_window)
             index.mainloop()
 
+        logger.debug('Camera closed - {}'.format(camera_provider().closed))
+
 
 if __name__ == '__main__':
     app = BerryCam()
