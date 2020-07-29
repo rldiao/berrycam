@@ -1,10 +1,13 @@
-from picamera import PiCamera
+try:
+    from picamera import PiCamera
+except ModuleNotFoundError as e:
+    print(e)
 
 
 class PiCameraWrapper:
     camera = None
 
-    def __init__(self, camera: PiCamera):
+    def __init__(self, camera):
         if PiCameraWrapper.camera is None:
             PiCameraWrapper.camera = camera
 
