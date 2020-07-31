@@ -1,6 +1,7 @@
 import tkinter as tk
 
 from .control_bar import ControlBar
+from .mode import ModeView
 from .mode_navbar import ModeNavBar
 
 
@@ -11,12 +12,10 @@ class Index:
         self.parent.geometry("320x300")
         self.parent.title("BerryCam")
 
-        for row_index in range(2):
-            tk.Grid.rowconfigure(self.parent, row_index, weight=1)
-            for col in range(1):
-                tk.Grid.columnconfigure(self.parent, col, weight=1)
+        tk.Grid.rowconfigure(self.parent, 0, weight=1)
+        tk.Grid.columnconfigure(self.parent, 0, weight=1)
 
-        main = tk.Frame(self.parent, bg='red', height='300', width='300').grid(row=0, column=0)
-        ModeNavBar(self.parent)
+        mode_view = ModeView(self.parent)
+        ModeNavBar(self.parent, mode_view)
         ControlBar(self.parent)
 

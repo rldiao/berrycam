@@ -3,19 +3,18 @@ import tkinter as tk
 from berrycam.camera import camera_provider
 
 
-class ExposureFrame(tk.Frame):
+class ExposureView:
 
-    def __init__(self, master=None, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.master = master
+    def __init__(self, parent=None, *args, **kwargs):
+        self.parent = parent
         self.camera = camera_provider()
 
-        self.exposure_frame = tk.Frame(self)
-        self.exposure_frame.grid(columnspan=2)
+        self.frame = tk.LabelFrame(self.parent, text='Exposure')
+        self.frame.grid(columnspan=2)
 
-        awb_var = tk.StringVar(self)
+        awb_var = tk.StringVar(self.frame)
         awb_var.set(self.camera.awb_mode)
-        tk.OptionMenu(self.exposure_frame, awb_var, *self.camera.AWB_MODES, command=self.set_awb).grid(row=3, column=2)
+        tk.OptionMenu(self.frame, awb_var, *self.camera.AWB_MODES, command=self.set_awb).grid(row=3, column=2)
 
     def update_brightness(self, value):
         pass
