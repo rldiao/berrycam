@@ -2,6 +2,7 @@ import os
 from picamera import PiCamera
 from dependency_injector import providers
 from datetime import datetime
+from collections import OrderedDict
 
 from src.errors.camera import CameraClosedError, CameraFormatError
 
@@ -13,31 +14,48 @@ class _PiCameraWrapper:
     """
     Private Class PiCamera Wrapper. Controls operations of PiCamera. Should be Singleton
     """
+    supported_img_fmts = ['jpeg', 'png', 'gif',
+                          'bmp', 'yuv', 'rgb', 'rgba', 'bgr', 'bgra']
+    supported_hq_res = OrderedDict([
+        ('CGA', (320, 200)),		('QVGA', (320, 240)),
+        ('VGA', (640, 480)),		('PAL', (768, 576)),
+        ('480p', (720, 480)),		('576p', (720, 576)),
+        ('WVGA', (800, 480)),		('SVGA', (800, 600)),
+        ('FWVGA', (854, 480)),		('WSVGA', (1024, 600)),
+        ('XGA', (1024, 768)),		('HD_720', (1280, 720)),
+        ('WXGA_1', (1280, 768)),	('WXGA_2', (1280, 800)),
+        ('SXGA', (1280, 1024)),		('SXGA+', (1400, 1050)),
+        ('UXGA', (1600, 1200)),		('WSXGA+', (1680, 1050)),
+        ('HD_1080', (1920, 1080)), 	('WUXGA', (1920, 1200)),
+        ('2K', (2048, 1080)),		('QXGA', (2048, 1536)),
+        ('QHD', (2560, 1440)),      ('WQXGA', (2560, 1600)),
+        ('4k', (3840, 2160)),       ('MAX', (4056, 3040)),
+    ])
 
     def __init__(self, camera: PiCamera, save_directory=None):
         if camera.closed:
             raise CameraClosedError(
                 "Trying to initialise _PiCameraWrapper with closed camera")
         self.__camera = camera
-
+        # Files
         self.save_directory = save_directory
+        # Image
         self.image_format = 'jpeg'
+        self.resolution = 'MAX'
 
     @property
     def closed(self):
+        """Returns if camera is closed"""
         return self.__camera.closed
 
     @property
     def save_directory(self):
+        """Returns file save directory"""
         return self._save_directory
 
     @save_directory.setter
     def save_directory(self, save_directory=None):
-        """Set where videos and photos are saved on Pi. Default to user Desktop
-
-        Args:
-            save_directory (string): String to save directory
-        """
+        """Set where files are saved on Pi. Default to user Desktop"""
         if save_directory is None:
             self._save_directory = os.path.join(
                 os.environ['HOME'], 'Desktop', 'BerryCam')
@@ -50,15 +68,31 @@ class _PiCameraWrapper:
 
     @property
     def image_format(self):
+        """Returns image format setting value"""
         return self._image_format
 
     @image_format.setter
     def image_format(self, image_format):
-        if image_format not in ['jpeg', 'png', 'gif', 'bmp', 'yuv', 'rgb', 'rgba', 'bgr', 'bgra']:
+        """Sets image format based on self.supported_img_fmts"""
+        if image_format not in self.supported_img_fmts:
             raise CameraFormatError('{} not supported'.format(image_format))
         self._image_format = image_format
 
+    @property
+    def resolution(self):
+        """Returns resolution setting value"""
+        return self._resolution
+
+    @resolution.setter
+    def resolution(self, mode):
+        """Sets resolution setting value"""
+        if mode not in self.supported_hq_res.keys():
+            # Create custom Resolution exception
+            raise Exception()
+        self._resolution = self.supported_hq_res[mode]
+
     def preview_on(self):
+        """Turns on camera preview"""
         logger.info('Camera Preview - ON')
         self.__camera.preview_fullscreen = False
         self.__camera.preview_window = (90, 100, 320, 240)
@@ -66,10 +100,12 @@ class _PiCameraWrapper:
         self.__camera.start_preview()
 
     def preview_off(self):
+        """Turns off camera preview"""
         logger.info('Camera Preview - OFF')
         self.__camera.stop_preview()
 
     def capture(self):
+        """Capture image"""
         # TODO: Customisable naming
         output = '{path}/{filename}.{format}'.format(path=self.save_directory,
                                                      filename=datetime.now(),
@@ -79,6 +115,12 @@ class _PiCameraWrapper:
 
 
 camera_provider = providers.Singleton(_PiCameraWrapper)
+
+
+if __name__ == "__main__":
+    with PiCamera() as pc:
+        c = camera_provider(pc)
+        print(c.resolution)
 
 # TODO: Turn this into unit test
 # # Retrieving several UserService objects:
