@@ -1,24 +1,22 @@
 import tkinter as tk
 
-from .exposure import ExposureFrame
-from .file import FileFrame
-from .photo import PhotoFrame
+from .control_bar import ControlBar
+from .mode_navbar import ModeNavBar
 
 
-class Index(tk.Frame):
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.master = master
-        self.pack()
+class Index:
+    def __init__(self, parent, *args, **kwargs):
+        self.parent = parent
 
-        self.master.geometry("320x300")
-        self.master.title("BerryCam")
+        self.parent.geometry("320x300")
+        self.parent.title("BerryCam")
 
-        preview = PhotoFrame(master=self)
-        preview.pack()
+        for row_index in range(2):
+            tk.Grid.rowconfigure(self.parent, row_index, weight=1)
+            for col in range(1):
+                tk.Grid.columnconfigure(self.parent, col, weight=1)
 
-        exposure = ExposureFrame(master=self)
-        exposure.pack()
+        main = tk.Frame(self.parent, bg='red', height='300', width='300').grid(row=0, column=0)
+        ModeNavBar(self.parent)
+        ControlBar(self.parent)
 
-        file = FileFrame(master=self)
-        file.pack()

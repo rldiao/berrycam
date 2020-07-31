@@ -5,8 +5,8 @@ from berrycam.camera import camera_provider
 
 class ExposureFrame(tk.Frame):
 
-    def __init__(self, master=None):
-        super().__init__(master)
+    def __init__(self, master=None, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
         self.master = master
         self.camera = camera_provider()
 
