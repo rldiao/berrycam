@@ -1,5 +1,4 @@
 import tkinter as tk
-from picamera import PiCamera
 
 from src.views.index import Index
 from src.camera import camera_provider
@@ -11,8 +10,7 @@ logger = logging.getLogger(__name__)
 class BerryCam:
     def run(self):
         logger.info('Running BerryCam...')
-        with PiCamera() as pc:
-            camera_provider(pc)
+        with camera_provider():
             root_window = tk.Tk()
             index = Index(master=root_window)
             index.mainloop()

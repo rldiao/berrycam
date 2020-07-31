@@ -2,18 +2,15 @@ import os
 from picamera import PiCamera
 from dependency_injector import providers
 from datetime import datetime
-from collections import OrderedDict
+# from collections import OrderedDict
 
-from src.errors.camera import CameraClosedError, CameraSettingsError
+from src.errors.camera import CameraSettingsError
 
 import logging
 logger = logging.getLogger(__name__)
 
 
-class _PiCameraWrapper:
-    """
-    Private Class PiCamera Wrapper. Controls operations of PiCamera. Should be Singleton
-    """
+class BerryCamera(PiCamera):
     image_formats = [
         'jpeg',
         'png',
@@ -25,56 +22,31 @@ class _PiCameraWrapper:
         'bgr',
         'bgra'
     ]
-    RESOLUTION_MODES = OrderedDict([
-        ('CGA', (320, 200)),		('QVGA', (320, 240)),
-        ('VGA', (640, 480)),		('PAL', (768, 576)),
-        ('480p', (720, 480)),		('576p', (720, 576)),
-        ('WVGA', (800, 480)),		('SVGA', (800, 600)),
-        ('FWVGA', (854, 480)),		('WSVGA', (1024, 600)),
-        ('XGA', (1024, 768)),		('HD_720', (1280, 720)),
-        ('WXGA_1', (1280, 768)),	('WXGA_2', (1280, 800)),
-        ('SXGA', (1280, 1024)),		('SXGA+', (1400, 1050)),
-        ('UXGA', (1600, 1200)),		('WSXGA+', (1680, 1050)),
-        ('HD_1080', (1920, 1080)), 	('WUXGA', (1920, 1200)),
-        ('2K', (2048, 1080)),		('QXGA', (2048, 1536)),
-        ('QHD', (2560, 1440)),      ('WQXGA', (2560, 1600)),
-        ('4k', (3840, 2160)),       ('MAX', (4056, 3040)),
-    ])
-    AWB_MODES = [
-        'off',
-        'auto',
-        'sunlight',
-        'cloudy',
-        'shade',
-        'tungsten',
-        'fluorescent',
-        'incandescent',
-        'flash',
-        'horizon'
-    ]
+    # RESOLUTION_MODES = OrderedDict([
+    #     ('CGA', (320, 200)),		('QVGA', (320, 240)),
+    #     ('VGA', (640, 480)),		('PAL', (768, 576)),
+    #     ('480p', (720, 480)),		('576p', (720, 576)),
+    #     ('WVGA', (800, 480)),		('SVGA', (800, 600)),
+    #     ('FWVGA', (854, 480)),		('WSVGA', (1024, 600)),
+    #     ('XGA', (1024, 768)),		('HD_720', (1280, 720)),
+    #     ('WXGA_1', (1280, 768)),	('WXGA_2', (1280, 800)),
+    #     ('SXGA', (1280, 1024)),		('SXGA+', (1400, 1050)),
+    #     ('UXGA', (1600, 1200)),		('WSXGA+', (1680, 1050)),
+    #     ('HD_1080', (1920, 1080)), 	('WUXGA', (1920, 1200)),
+    #     ('2K', (2048, 1080)),		('QXGA', (2048, 1536)),
+    #     ('QHD', (2560, 1440)),      ('WQXGA', (2560, 1600)),
+    #     ('4k', (3840, 2160)),       ('MAX', (4056, 3040)),
+    # ])
 
-    def __init__(self, camera: PiCamera, save_directory=None):
-        if camera.closed:
-            raise CameraClosedError(
-                "Trying to initialise _PiCameraWrapper with closed camera")
-        self.__camera = camera
-
+    def __init__(self, save_directory=None):
+        super(BerryCamera, self).__init__()
         # Files
         self.save_directory = save_directory
+        # Preview
+        self.preview_fullscreen = False
+        self.preview_window = (90, 100, 320, 240)
         # Image
         self.image_format = self.image_formats[0]
-        self.resolution = 'MAX'
-        self.awb_mode = 'off'
-
-    def __repr__(self):
-        output = self.__dict__.copy()
-        del output['_PiCameraWrapper__camera']
-        return str(output)
-
-    @property
-    def closed(self):
-        """Returns if camera is closed"""
-        return self.__camera.closed
 
     @property
     def save_directory(self):
@@ -106,46 +78,15 @@ class _PiCameraWrapper:
                 'Image format {} not supported'.format(image_format))
         self._image_format = image_format
 
-    @property
-    def resolution(self):
-        """Returns resolution setting value"""
-        return self._resolution
-
-    @resolution.setter
-    def resolution(self, res_key):
-        """Sets resolution setting value"""
-        logger.info('Set camera resolution mode - {}'.format(res_key))
-        if res_key not in self.RESOLUTION_MODES.keys():
-            CameraSettingsError('Resolution {} not supported'.format(res_key))
-        self._resolution = self.RESOLUTION_MODES[res_key]
-        self.__camera.resolution = self._resolution
-
-    @property
-    def awb_mode(self):
-        """Returns auto white balance mode"""
-        return self._awb_mode
-
-    @awb_mode.setter
-    def awb_mode(self, awb_mode):
-        """Sets auto white balance mode"""
-        logger.info('Set camera awb mode - {}'.format(awb_mode))
-        if awb_mode not in self.__camera.AWB_MODES:
-            raise CameraSettingsError(
-                'Auto white balance mode {} not supported'.format(awb_mode))
-        self._awb_mode = awb_mode
-        self.__camera.awb_mode = self._awb_mode
-
-    def preview_on(self):
+    def start_preview(self):
         """Turns on camera preview"""
         logger.info('Camera Preview - ON')
-        self.__camera.preview_fullscreen = False
-        self.__camera.preview_window = (90, 100, 320, 240)
-        self.__camera.start_preview()
+        super().start_preview()
 
-    def preview_off(self):
+    def stop_preview(self):
         """Turns off camera preview"""
         logger.info('Camera Preview - OFF')
-        self.__camera.stop_preview()
+        super().stop_preview()
 
     def capture(self):
         """Capture image"""
@@ -155,16 +96,15 @@ class _PiCameraWrapper:
                                                      format=self.image_format)
         logger.info('Capturing photo and saving to {}'.format(output))
         logger.debug('Camera Settings - {}'.format(repr(self)))
-        self.__camera.capture(output, format=self.image_format)
+        super().capture(output, format=self.image_format)
 
 
-camera_provider = providers.Singleton(_PiCameraWrapper)
+camera_provider = providers.Singleton(BerryCamera)
 
 # TODO REMOVE
 if __name__ == "__main__":
-    with PiCamera() as pc:
-        c = camera_provider(pc)
-        print(c.resolution)
+    with camera_provider() as c:
+        print('hello')
 
 # TODO: Turn this into unit test
 # # Retrieving several UserService objects:
