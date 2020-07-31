@@ -18,13 +18,13 @@ class PhotoFrame(tk.Frame):
         super().__init__(master)
         self.master = master
 
-        self.btn_frame = tk.Frame(self)
-        self.btn_frame.grid(columnspan=2)
+        self.photo_frame = tk.Frame(self)
+        self.photo_frame.grid(columnspan=2)
 
-        tk.Button(self.btn_frame, text='Preview ON', command=self.preview_on).grid(row=1, column=1)
-        tk.Button(self.btn_frame, text='Preview OFF', command=self.preview_off).grid(row=1, column=2)
+        tk.Button(self.photo_frame, text='Preview ON', command=self.preview_on).grid(row=1, column=1)
+        tk.Button(self.photo_frame, text='Preview OFF', command=self.preview_off).grid(row=1, column=2)
 
-        tk.Button(self.btn_frame, text='Take Photo', command=self.take_photo).grid(row=1, column=3)
+        tk.Button(self.photo_frame, text='Take Photo', command=self.take_photo).grid(row=1, column=3)
 
     def preview_on(self):
         logger.info('Preview - ON')

@@ -1,6 +1,7 @@
 import tkinter as tk
 
 from .exposure import ExposureFrame
+from .file import FileFrame
 from .photo import PhotoFrame
 
 
@@ -18,3 +19,6 @@ class Index(tk.Frame):
 
         exposure = ExposureFrame(master=self)
         exposure.pack()
+
+        file = FileFrame(master=self)
+        file.pack()

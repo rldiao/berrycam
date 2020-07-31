@@ -10,12 +10,12 @@ class ExposureFrame(tk.Frame):
         self.master = master
         self.camera = camera_provider()
 
-        self.btn_frame = tk.Frame(self)
-        self.btn_frame.grid(columnspan=2)
+        self.exposure_frame = tk.Frame(self)
+        self.exposure_frame.grid(columnspan=2)
 
         awb_var = tk.StringVar(self)
         awb_var.set(self.camera.awb_mode)
-        tk.OptionMenu(self.btn_frame, awb_var, *self.camera.AWB_MODES, command=self.set_awb).grid(row=3, column=2)
+        tk.OptionMenu(self.exposure_frame, awb_var, *self.camera.AWB_MODES, command=self.set_awb).grid(row=3, column=2)
 
     def update_brightness(self, value):
         pass
