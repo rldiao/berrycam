@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class _PiCameraWrapper:
+class BerryCamera(PiCamera):
     """
     Private Class PiCamera Wrapper. Controls operations of PiCamera. Should be Singleton
     """
@@ -53,12 +53,7 @@ class _PiCameraWrapper:
         'horizon'
     ]
 
-    def __init__(self, camera: PiCamera, save_directory=None):
-        if camera.closed:
-            raise CameraClosedError(
-                "Trying to initialise _PiCameraWrapper with closed camera")
-        self.__camera = camera
-
+    def __init__(self, save_directory=None):
         # Files
         self.save_directory = save_directory
         # Image
@@ -158,7 +153,7 @@ class _PiCameraWrapper:
         self.__camera.capture(output, format=self.image_format)
 
 
-camera_provider = providers.Singleton(_PiCameraWrapper)
+camera_provider = providers.Singleton(BerryCamera)
 
 # TODO REMOVE
 if __name__ == "__main__":
