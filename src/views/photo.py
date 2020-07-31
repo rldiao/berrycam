@@ -27,11 +27,11 @@ class PhotoFrame(tk.Frame):
 
     def preview_on(self):
         logger.info('Preview - ON')
-        self.camera.preview_on()
+        self.camera.start_preview()
 
     def preview_off(self):
         logger.info('Preview - OFF')
-        self.camera.preview_off()
+        self.camera.stop_preview()
 
     def take_photo(self):
         logger.info('Snap!')
