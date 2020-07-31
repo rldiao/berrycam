@@ -25,7 +25,7 @@ class _PiCameraWrapper:
         'bgr',
         'bgra'
     ]
-    resolutions = OrderedDict([
+    RESOLUTION_MODES = OrderedDict([
         ('CGA', (320, 200)),		('QVGA', (320, 240)),
         ('VGA', (640, 480)),		('PAL', (768, 576)),
         ('480p', (720, 480)),		('576p', (720, 576)),
@@ -58,12 +58,18 @@ class _PiCameraWrapper:
             raise CameraClosedError(
                 "Trying to initialise _PiCameraWrapper with closed camera")
         self.__camera = camera
+
         # Files
         self.save_directory = save_directory
         # Image
         self.image_format = self.image_formats[0]
-        # self.resolution = self.resolutions['MAX']
+        self.resolution = 'MAX'
         self.awb_mode = 'off'
+
+    def __repr__(self):
+        output = self.__dict__.copy()
+        del output['_PiCameraWrapper__camera']
+        return str(output)
 
     @property
     def closed(self):
@@ -106,12 +112,13 @@ class _PiCameraWrapper:
         return self._resolution
 
     @resolution.setter
-    def resolution(self, mode):
+    def resolution(self, res_key):
         """Sets resolution setting value"""
-        if mode not in self.resolutions.keys():
-            # Create custom Resolution exception
-            raise Exception()
-        self._resolution = self.resolutions[mode]
+        logger.info('Set camera resolution mode - {}'.format(res_key))
+        if res_key not in self.RESOLUTION_MODES.keys():
+            CameraSettingsError('Resolution {} not supported'.format(res_key))
+        self._resolution = self.RESOLUTION_MODES[res_key]
+        self.__camera.resolution = self._resolution
 
     @property
     def awb_mode(self):
@@ -121,7 +128,7 @@ class _PiCameraWrapper:
     @awb_mode.setter
     def awb_mode(self, awb_mode):
         """Sets auto white balance mode"""
-        logger.debug('Set camera awb mode - {}'.format(awb_mode))
+        logger.info('Set camera awb mode - {}'.format(awb_mode))
         if awb_mode not in self.__camera.AWB_MODES:
             raise CameraSettingsError(
                 'Auto white balance mode {} not supported'.format(awb_mode))
@@ -133,7 +140,6 @@ class _PiCameraWrapper:
         logger.info('Camera Preview - ON')
         self.__camera.preview_fullscreen = False
         self.__camera.preview_window = (90, 100, 320, 240)
-        self.__camera.resolution = (640, 480)
         self.__camera.start_preview()
 
     def preview_off(self):
@@ -148,12 +154,13 @@ class _PiCameraWrapper:
                                                      filename=datetime.now(),
                                                      format=self.image_format)
         logger.info('Capturing photo and saving to {}'.format(output))
+        logger.debug('Camera Settings - {}'.format(repr(self)))
         self.__camera.capture(output, format=self.image_format)
 
 
 camera_provider = providers.Singleton(_PiCameraWrapper)
 
-
+# TODO REMOVE
 if __name__ == "__main__":
     with PiCamera() as pc:
         c = camera_provider(pc)

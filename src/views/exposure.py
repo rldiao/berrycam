@@ -28,6 +28,10 @@ class ExposureFrame(tk.Frame):
         awb_var.set(self.camera.awb_mode)
         tk.OptionMenu(self.btn_frame, awb_var, *self.camera.AWB_MODES, command=self.set_awb).grid(row=3, column=2)
 
+        resolution = tk.StringVar(self)
+        resolution.set(self.camera.resolution)
+        tk.OptionMenu(self.btn_frame, resolution, *self.camera.RESOLUTIONS, command=self.set_resolution).grid(row=3, column=3)
+
     def update_brightness(self, value):
         pass
 
@@ -42,6 +46,9 @@ class ExposureFrame(tk.Frame):
 
     def set_awb(self, var):
         self.camera.awb_mode = var
+
+    def set_resolution(self, res_mode):
+        self.camera.resolution = res_mode
 
     def zoom(self, var):
         pass
