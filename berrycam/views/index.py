@@ -18,6 +18,3 @@ class Index(tk.Frame):
 
         exposure = ExposureFrame(master=self)
         exposure.pack()
-
-
-

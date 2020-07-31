@@ -3,6 +3,7 @@ import tkinter as tk
 from berrycam.camera import camera_provider
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 

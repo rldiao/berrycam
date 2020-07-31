@@ -10,6 +10,7 @@ except ImportError:
     from fake_rpi.picamera import PiCamera
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
