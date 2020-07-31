@@ -1,9 +1,13 @@
 import os
-from picamera import PiCamera
 from dependency_injector import providers
 from datetime import datetime
 
-from src.errors.camera import CameraSettingsError
+from berrycam.errors.camera import CameraSettingsError
+
+try:
+    from picamera import PiCamera
+except ImportError:
+    from fake_rpi.picamera import PiCamera
 
 import logging
 logger = logging.getLogger(__name__)

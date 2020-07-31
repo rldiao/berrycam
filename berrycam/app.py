@@ -1,7 +1,7 @@
 import tkinter as tk
 
-from src.views.index import Index
-from src.camera import camera_provider
+from berrycam.views.index import Index
+from berrycam.camera import camera_provider
 
 import logging
 logger = logging.getLogger(__name__)

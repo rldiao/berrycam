@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from src.camera import camera_provider
+from berrycam.camera import camera_provider
 
 
 class ExposureFrame(tk.Frame):
