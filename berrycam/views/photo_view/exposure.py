@@ -10,7 +10,13 @@ class ExposureView:
         self.camera = camera_provider()
 
         self.frame = tk.LabelFrame(self.parent, text='Exposure')
-        self.frame.grid(columnspan=2)
+        self.frame.grid()
+
+        tk.Scale(self.frame, from_=30, to=100, orient=tk.HORIZONTAL, label="Brightness").grid(row=2, column=1)
+        tk.Scale(self.frame, from_=-100, to=100, orient=tk.HORIZONTAL, label="Contrast").grid(row=2, column=2)
+        tk.Scale(self.frame, from_=-100, to=100, orient=tk.HORIZONTAL, label="Sharpness").grid(row=2, column=3)
+        tk.Scale(self.frame, from_=-100, to=100, orient=tk.HORIZONTAL, label="Saturation").grid(row=3, column=1)
+        tk.Scale(self.frame, from_=10, to=99, orient=tk.HORIZONTAL, label="Zoom").grid(row=4, column=1)
 
         awb_var = tk.StringVar(self.frame)
         awb_var.set(self.camera.awb_mode)

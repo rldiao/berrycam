@@ -9,7 +9,7 @@ class Index:
     def __init__(self, parent, *args, **kwargs):
         self.parent = parent
 
-        self.parent.geometry("320x300")
+        self.parent.geometry("600x600")
         self.parent.title("BerryCam")
 
         tk.Grid.rowconfigure(self.parent, 0, weight=1)
