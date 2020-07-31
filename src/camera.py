@@ -4,7 +4,7 @@ from dependency_injector import providers
 from datetime import datetime
 from collections import OrderedDict
 
-from src.errors.camera import CameraClosedError, CameraFormatError
+from src.errors.camera import CameraClosedError, CameraSettingsError
 
 import logging
 logger = logging.getLogger(__name__)
@@ -14,9 +14,18 @@ class _PiCameraWrapper:
     """
     Private Class PiCamera Wrapper. Controls operations of PiCamera. Should be Singleton
     """
-    supported_img_fmts = ['jpeg', 'png', 'gif',
-                          'bmp', 'yuv', 'rgb', 'rgba', 'bgr', 'bgra']
-    supported_hq_res = OrderedDict([
+    image_formats = [
+        'jpeg',
+        'png',
+        'gif',
+        'bmp',
+        'yuv',
+        'rgb',
+        'rgba',
+        'bgr',
+        'bgra'
+    ]
+    resolutions = OrderedDict([
         ('CGA', (320, 200)),		('QVGA', (320, 240)),
         ('VGA', (640, 480)),		('PAL', (768, 576)),
         ('480p', (720, 480)),		('576p', (720, 576)),
@@ -31,6 +40,18 @@ class _PiCameraWrapper:
         ('QHD', (2560, 1440)),      ('WQXGA', (2560, 1600)),
         ('4k', (3840, 2160)),       ('MAX', (4056, 3040)),
     ])
+    AWB_MODES = [
+        'off',
+        'auto',
+        'sunlight',
+        'cloudy',
+        'shade',
+        'tungsten',
+        'fluorescent',
+        'incandescent',
+        'flash',
+        'horizon'
+    ]
 
     def __init__(self, camera: PiCamera, save_directory=None):
         if camera.closed:
@@ -40,8 +61,9 @@ class _PiCameraWrapper:
         # Files
         self.save_directory = save_directory
         # Image
-        self.image_format = 'jpeg'
-        self.resolution = 'MAX'
+        self.image_format = self.image_formats[0]
+        # self.resolution = self.resolutions['MAX']
+        self.awb_mode = 'off'
 
     @property
     def closed(self):
@@ -63,7 +85,6 @@ class _PiCameraWrapper:
                 os.makedirs(self._save_directory)
         else:
             self._save_directory = save_directory
-
         logger.debug('Save directory - {}'.format(self._save_directory))
 
     @property
@@ -73,9 +94,10 @@ class _PiCameraWrapper:
 
     @image_format.setter
     def image_format(self, image_format):
-        """Sets image format based on self.supported_img_fmts"""
-        if image_format not in self.supported_img_fmts:
-            raise CameraFormatError('{} not supported'.format(image_format))
+        """Sets image format based on self.image_formats"""
+        if image_format not in self.image_formats:
+            raise CameraSettingsError(
+                'Image format {} not supported'.format(image_format))
         self._image_format = image_format
 
     @property
@@ -86,10 +108,25 @@ class _PiCameraWrapper:
     @resolution.setter
     def resolution(self, mode):
         """Sets resolution setting value"""
-        if mode not in self.supported_hq_res.keys():
+        if mode not in self.resolutions.keys():
             # Create custom Resolution exception
             raise Exception()
-        self._resolution = self.supported_hq_res[mode]
+        self._resolution = self.resolutions[mode]
+
+    @property
+    def awb_mode(self):
+        """Returns auto white balance mode"""
+        return self._awb_mode
+
+    @awb_mode.setter
+    def awb_mode(self, awb_mode):
+        """Sets auto white balance mode"""
+        logger.debug('Set camera awb mode - {}'.format(awb_mode))
+        if awb_mode not in self.__camera.AWB_MODES:
+            raise CameraSettingsError(
+                'Auto white balance mode {} not supported'.format(awb_mode))
+        self._awb_mode = awb_mode
+        self.__camera.awb_mode = self._awb_mode
 
     def preview_on(self):
         """Turns on camera preview"""

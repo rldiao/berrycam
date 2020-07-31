@@ -1,8 +1,8 @@
 class CameraClosedError(Exception):
-    """ Camera is unexceptedly closed """
+    """Camera is unexceptedly closed"""
     pass
 
 
-class CameraFormatError(Exception):
-    """ Unsupported camera format or file extension """
+class CameraSettingsError(Exception):
+    """Unsupported camera setting"""
     pass
