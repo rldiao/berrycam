@@ -2,7 +2,6 @@ import os
 from picamera import PiCamera
 from dependency_injector import providers
 from datetime import datetime
-# from collections import OrderedDict
 
 from src.errors.camera import CameraSettingsError
 
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class BerryCamera(PiCamera):
-    image_formats = [
+    IMAGE_FORMATS = [
         'jpeg',
         'png',
         'gif',
@@ -22,21 +21,6 @@ class BerryCamera(PiCamera):
         'bgr',
         'bgra'
     ]
-    # RESOLUTION_MODES = OrderedDict([
-    #     ('CGA', (320, 200)),		('QVGA', (320, 240)),
-    #     ('VGA', (640, 480)),		('PAL', (768, 576)),
-    #     ('480p', (720, 480)),		('576p', (720, 576)),
-    #     ('WVGA', (800, 480)),		('SVGA', (800, 600)),
-    #     ('FWVGA', (854, 480)),		('WSVGA', (1024, 600)),
-    #     ('XGA', (1024, 768)),		('HD_720', (1280, 720)),
-    #     ('WXGA_1', (1280, 768)),	('WXGA_2', (1280, 800)),
-    #     ('SXGA', (1280, 1024)),		('SXGA+', (1400, 1050)),
-    #     ('UXGA', (1600, 1200)),		('WSXGA+', (1680, 1050)),
-    #     ('HD_1080', (1920, 1080)), 	('WUXGA', (1920, 1200)),
-    #     ('2K', (2048, 1080)),		('QXGA', (2048, 1536)),
-    #     ('QHD', (2560, 1440)),      ('WQXGA', (2560, 1600)),
-    #     ('4k', (3840, 2160)),       ('MAX', (4056, 3040)),
-    # ])
 
     def __init__(self, save_directory=None):
         super(BerryCamera, self).__init__()
@@ -46,7 +30,7 @@ class BerryCamera(PiCamera):
         self.preview_fullscreen = False
         self.preview_window = (90, 100, 320, 240)
         # Image
-        self.image_format = self.image_formats[0]
+        self.image_format = self.IMAGE_FORMATS[0]
 
     @property
     def save_directory(self):
@@ -72,8 +56,8 @@ class BerryCamera(PiCamera):
 
     @image_format.setter
     def image_format(self, image_format):
-        """Sets image format based on self.image_formats"""
-        if image_format not in self.image_formats:
+        """Sets image format based on self.IMAGE_FORMATS"""
+        if image_format not in self.IMAGE_FORMATS:
             raise CameraSettingsError(
                 'Image format {} not supported'.format(image_format))
         self._image_format = image_format
@@ -100,17 +84,3 @@ class BerryCamera(PiCamera):
 
 
 camera_provider = providers.Singleton(BerryCamera)
-
-# TODO REMOVE
-if __name__ == "__main__":
-    with camera_provider() as c:
-        print('hello')
-
-# TODO: Turn this into unit test
-# # Retrieving several UserService objects:
-# camera_handler_provider1 = camera_handler_provider()
-# camera_handler_provider2 = camera_handler_provider()
-
-
-# # Making some asserts:
-# assert camera_handler_provider1 is camera_handler_provider2

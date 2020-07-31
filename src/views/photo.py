@@ -18,7 +18,7 @@ class PhotoFrame(tk.Frame):
         self.master = master
 
         self.btn_frame = tk.Frame(self)
-        self.btn_frame.grid(row=1, column=2, columnspan=2)
+        self.btn_frame.grid(columnspan=2)
 
         tk.Button(self.btn_frame, text='Preview ON', command=self.preview_on).grid(row=1, column=1)
         tk.Button(self.btn_frame, text='Preview OFF', command=self.preview_off).grid(row=1, column=2)
