@@ -15,7 +15,7 @@ class Index:
         tk.Grid.rowconfigure(self.parent, 0, weight=1)
         tk.Grid.columnconfigure(self.parent, 0, weight=1)
 
-        mode_view = ModeView(self.parent)
-        ModeNavBar(self.parent, mode_view)
-        ControlBar(self.parent)
+        mode_view = ModeView(self.parent).grid(sticky='nsew')
+        ModeNavBar(self.parent, mode_view).grid(sticky='sew')
+        ControlBar(self.parent).grid(sticky='nsew')
 
