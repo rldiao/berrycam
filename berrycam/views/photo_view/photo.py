@@ -10,4 +10,4 @@ class PhotoView:
         self.frame = tk.Frame(self.parent)
         self.frame.grid(row=0, column=0)
 
-        ExposureView(self.frame)
+        ExposureView(self.frame).grid()
