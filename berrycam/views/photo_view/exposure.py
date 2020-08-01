@@ -61,3 +61,10 @@ class ExposureView(tk.LabelFrame):
     def set_iso(self, iso_value):
         """Set camera ISO"""
         self.camera.iso = iso_value
+
+    def set_exposure_compensation(self, exposure_comp_value):
+        """
+        Set camera exposure compensation value.
+        -25 to 25 with each point representing 1/6th stop (as of PiCamera V1.13)
+        """
+        self.camera.exposure_compensation = exposure_comp_value
