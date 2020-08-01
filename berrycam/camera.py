@@ -37,6 +37,10 @@ class BerryCamera(PiCamera):
         # Image
         self.image_format = self.IMAGE_FORMATS[0]
 
+    def __repr__(self):
+        # TODO: Improve this
+        return str(self.__dict__)
+
     @property
     def save_directory(self):
         """Returns file save directory"""
