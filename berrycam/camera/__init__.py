@@ -1,1 +1,1 @@
-from .camera import camera_provider
+from .camera import camera_provider  # noqa
