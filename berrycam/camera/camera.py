@@ -33,6 +33,8 @@ class BerryCamera(PiCamera):
         # Files
         self.save_directory = save_directory
         # Preview
+        # TODO: Override these properties
+        # https://stackoverflow.com/questions/36336960/override-an-attribute-with-a-property-in-python-class
         self.preview_fullscreen = False
         self.preview_window = (90, 100, 320, 240)
         # Image
@@ -75,7 +77,12 @@ class BerryCamera(PiCamera):
     @property
     def settings(self):
         """Returns all camera parameter"""
-        return vars(self)
+        settings = vars(self)
+        # Remove _ from @property values
+        for key in settings.keys():
+            if key.startswith('_'):
+                settings[key[1:]] = settings.pop(key)
+        return settings
 
     def toggle_preview(self):
         """Turns on camera preview"""

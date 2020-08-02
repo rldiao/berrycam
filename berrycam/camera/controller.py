@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 
 from berrycam.camera import camera_provider
+from berrycam.camera.helpers import invalid_settings
 
 camera_bp = Blueprint(
     'camera_bp',
@@ -9,16 +10,22 @@ camera_bp = Blueprint(
 )
 
 
-@camera_bp.route('/', methods=['GET', 'POST'])
-def camera():
+@camera_bp.route('/settings', methods=['GET', 'POST'])
+def settings():
+    # TODO: Need better type protection
+    camera = camera_provider()
+
     if request.method == 'GET':
-        return jsonify(camera_provider().settings)
-    # elif request.method == 'POST':
-    #     try:
-    #         camera.image_format = str(request.data)
-    #     except CameraSettingsError as e:
-    #         return str(e)
-    #     return camera.image_format
+        return jsonify(camera.settings)
+
+    if request.method == 'POST':
+        new_settings = request.get_json()
+        errors = invalid_settings(camera, new_settings)
+        if invalid_settings:
+            return jsonify({
+                'invalid_settings': errors,
+            }), 400
+        return jsonify(camera.settings)
 
 
 @camera_bp.route('/toggle_preview', methods=['GET'])
@@ -49,4 +56,4 @@ def capture():
             'message': str(e)
         }
         status_code = 500
-    return jsonify(response),
+    return jsonify(response), status_code
