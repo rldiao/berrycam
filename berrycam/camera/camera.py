@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class BerryCamera(PiCamera):
+    """Should be initialized via camera_provider"""
     IMAGE_FORMATS = [
         'jpeg',
         'png',

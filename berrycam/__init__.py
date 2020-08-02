@@ -1,1 +1,1 @@
-import berrycam.settings
+import berrycam.config
