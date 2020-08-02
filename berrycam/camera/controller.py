@@ -21,9 +21,32 @@ def camera():
     #     return camera.image_format
 
 
+@camera_bp.route('/toggle_preview', methods=['GET'])
+def toggle_preview():
+    response = {}
+    status_code = 200
+    try:
+        camera_provider().toggle_preview()
+    except Exception as e:
+        response['error'] = {
+            'type': type(e),
+            'message': str(e)
+        }
+        status_code = 500
+    response['message'] = 'Preview Off' if camera_provider().preview is None else 'Preview On'
+    return jsonify(response), status_code
+
+
 @camera_bp.route('/capture', methods=['GET'])
 def capture():
-    filename = camera_provider().capture()
-    return jsonify({
-        'filename': filename
-    })
+    response = {}
+    status_code = 200
+    try:
+        response['filename'] = camera_provider().capture()
+    except Exception as e:
+        response['error'] = {
+            'type': type(e),
+            'message': str(e)
+        }
+        status_code = 500
+    return jsonify(response),

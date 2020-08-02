@@ -77,15 +77,14 @@ class BerryCamera(PiCamera):
         """Returns all camera parameter"""
         return vars(self)
 
-    def start_preview(self):
+    def toggle_preview(self):
         """Turns on camera preview"""
-        logger.info('Camera Preview - ON')
-        super().start_preview()
-
-    def stop_preview(self):
-        """Turns off camera preview"""
-        logger.info('Camera Preview - OFF')
-        super().stop_preview()
+        if self.preview is None:
+            logger.info('Camera Preview - ON')
+            super().start_preview()
+        else:
+            logger.info('Camera Preview - OFF')
+            super().stop_preview()
 
     def capture(self):
         """Capture image"""
