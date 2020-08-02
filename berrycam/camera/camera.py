@@ -85,7 +85,7 @@ class BerryCamera(PiCamera):
         return settings
 
     def toggle_preview(self):
-        """Turns on camera preview"""
+        """Toggle camera preview"""
         if self.preview is None:
             logger.info('Camera Preview - ON')
             super().start_preview()
