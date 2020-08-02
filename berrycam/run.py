@@ -1,5 +1,3 @@
-from flask import Flask
-
 from berrycam import create_app
 from berrycam.camera import camera_provider
 

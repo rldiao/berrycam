@@ -1,6 +1,4 @@
-from flask import Flask, current_app
-
-import berrycam.config
+from flask import Flask
 
 
 def create_app():
@@ -9,9 +7,11 @@ def create_app():
 
     with app.app_context():
         # Import application components
-        from berrycam.camera.controller import camera_bp
+        from berrycam.camera.apis import camera_api_bp
+        from berrycam.camera.views import camera_view_bp
 
         # Register blueprints
-        app.register_blueprint(camera_bp)
+        app.register_blueprint(camera_api_bp)
+        app.register_blueprint(camera_view_bp)
 
     return app
