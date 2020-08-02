@@ -12,7 +12,7 @@ camera_bp = Blueprint(
 @camera_bp.route('/', methods=['GET', 'POST'])
 def camera():
     if request.method == 'GET':
-        return jsonify(camera_provider().__dict__)
+        return jsonify(camera_provider().settings)
     # elif request.method == 'POST':
     #     try:
     #         camera.image_format = str(request.data)

@@ -72,6 +72,11 @@ class BerryCamera(PiCamera):
                 'Image format {} not supported'.format(image_format))
         self._image_format = image_format
 
+    @property
+    def settings(self):
+        """Returns all camera parameter"""
+        return vars(self)
+
     def start_preview(self):
         """Turns on camera preview"""
         logger.info('Camera Preview - ON')

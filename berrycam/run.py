@@ -5,8 +5,8 @@ from berrycam.camera import camera_provider
 
 app = create_app()
 
-if __name__ == '__main__':
-    app.logger.info('Running BerryCam...')
-    with camera_provider() as c:
-        app.run(host='localhost', port=8000)
-    app.logger.debug('Camera closed - {}'.format(camera_provider().closed))
+app.logger.info('Running BerryCam...')
+camera_provider()
+app.logger.debug('Camera Status - {}'.format(not camera_provider().closed))
+camera_provider().close()
+app.logger.debug('Camera Status - {}'.format(not camera_provider().closed))
