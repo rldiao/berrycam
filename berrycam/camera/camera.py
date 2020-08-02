@@ -2,7 +2,7 @@ import os
 from dependency_injector import providers
 from datetime import datetime
 
-from berrycam.errors.camera import CameraSettingsError
+from berrycam.camera.errors import CameraSettingsError
 
 try:
     from picamera import PiCamera
@@ -91,6 +91,7 @@ class BerryCamera(PiCamera):
         logger.info('Capturing photo and saving to {}'.format(output))
         logger.debug('Camera Settings - {}'.format(repr(self)))
         super().capture(output, format=self.image_format)
+        return output
 
 
 camera_provider = providers.Singleton(BerryCamera)
