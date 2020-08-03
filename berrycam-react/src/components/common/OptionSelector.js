@@ -6,7 +6,7 @@ import Select from "@material-ui/core/Select";
 
 function OptionSelector(props) {
   const options_menu = props.options.map((mode) => {
-    return <MenuItem value={mode}>{mode}</MenuItem>
+    return <MenuItem key={mode} value={mode}>{mode}</MenuItem>
   })
 
   return (
@@ -18,7 +18,7 @@ function OptionSelector(props) {
         onChange={props.onChange}
         name={props.name}
         displayEmpty
-        renderValue={ () => <MenuItem value={props.value}>{props.value}</MenuItem> }
+        value={props.value}
       >
         {options_menu}
       </Select>
@@ -30,7 +30,7 @@ OptionSelector.propTypes = {
   name: PropTypes.string.isRequired,
   labelId: PropTypes.string,
   id: PropTypes.string,
-  value: PropTypes.any,
+  value: PropTypes.any.isRequired,
   onChange: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired
 }

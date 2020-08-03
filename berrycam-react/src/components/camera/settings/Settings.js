@@ -1,15 +1,14 @@
-import React, { Component } from "react"
-import FormControl from "@material-ui/core/FormControl"
-import OptionSelector from '../common/OptionSelector'
-import Axios from "axios"
+import React, { Component } from 'react'
+import Grid from '@material-ui/core/Grid'
+import Exposure from './Exposure'
+import WhiteBalance from './WhiteBalance'
+import Axios from 'axios'
 
-export default class WhiteBalance extends Component {
+export default class Settings extends Component {
   state = {
     "AWB_MODES": [],
     "awb_mode": ""
   }
-
-  handleSettingsChange = this.handleSettingsChange.bind(this)
 
   componentDidMount() {
     Axios.get("/api/camera/settings/options")
@@ -40,22 +39,23 @@ export default class WhiteBalance extends Component {
       console.log(e)
     })
   }
+  handleSettingsChange = this.handleSettingsChange.bind(this)
+
 
   render() {
     return (
-      <div>
-        <FormControl>
-          <OptionSelector
-            id="awb"
-            label="AWB"
-            labelId="awb-label"
-            name="awb_mode"
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Exposure></Exposure>
+        </Grid>
+        <Grid item xs={12}>
+          <WhiteBalance
             options={this.state.AWB_MODES}
-            value={this.state.awb_mode}
             onChange={this.handleSettingsChange}
+            awbMode={this.state.awb_mode}
           />
-        </FormControl>
-      </div>
+        </Grid>
+      </Grid>
     )
   }
 }
