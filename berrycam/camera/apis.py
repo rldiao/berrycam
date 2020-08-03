@@ -21,11 +21,29 @@ def settings():
     if request.method == 'POST':
         new_settings = request.get_json()
         errors = invalid_settings(camera, new_settings)
-        if invalid_settings:
+        if errors:
             return jsonify({
                 'invalid_settings': errors,
             }), 400
+
+        for setting, value in new_settings.items():
+            setattr(camera, setting, value)
+
         return jsonify(camera.settings)
+
+
+@camera_api_bp.route('/settings/options', methods=['GET'])
+def awb_modes():
+    camera = camera_provider()
+
+    options = {
+        'image_formats': list(camera_provider().IMAGE_FORMATS),
+        'awb_modes': list(camera.AWB_MODES.keys()),
+        'exposure_modes': list(camera.EXPOSURE_MODES.keys()),
+        'meter_modes': list(camera.METER_MODES.keys()),
+    }
+
+    return jsonify(options)
 
 
 @camera_api_bp.route('/toggle_preview', methods=['GET'])

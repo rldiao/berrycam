@@ -1,12 +1,26 @@
 import React from 'react';
-import ControlBar from './components/controls/ControlBar'
+import Grid from '@material-ui/core/Grid'
+
+import ControlBar from './components/camera/ControlBar'
+
+import styles from './App.module.css'
+import Exposure from './components/camera/Exposure';
+import WhiteBalance from './components/camera/WhiteBalance';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <ControlBar></ControlBar>
-      </header>
+    <div className={styles.app}>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Exposure></Exposure>
+        </Grid>
+        <Grid item xs={12}>
+          <WhiteBalance></WhiteBalance>
+        </Grid>
+        <Grid item xs={12}>
+          <ControlBar></ControlBar>
+        </Grid>
+      </Grid>
     </div>
   );
 }
