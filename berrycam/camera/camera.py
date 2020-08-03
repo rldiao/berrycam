@@ -2,7 +2,7 @@ import os
 from dependency_injector import providers
 from datetime import datetime
 
-from berrycam.errors.camera import CameraSettingsError
+from berrycam.camera.errors import CameraSettingsError
 
 try:
     from picamera import PiCamera
@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class BerryCamera(PiCamera):
+    """Should be initialized via camera_provider"""
     IMAGE_FORMATS = [
         'jpeg',
         'png',
@@ -32,10 +33,16 @@ class BerryCamera(PiCamera):
         # Files
         self.save_directory = save_directory
         # Preview
+        # TODO: Override these properties
+        # https://stackoverflow.com/questions/36336960/override-an-attribute-with-a-property-in-python-class
         self.preview_fullscreen = False
         self.preview_window = (90, 100, 320, 240)
         # Image
         self.image_format = self.IMAGE_FORMATS[0]
+
+    def __repr__(self):
+        # TODO: Improve this
+        return str(self.__dict__)
 
     @property
     def save_directory(self):
@@ -67,15 +74,24 @@ class BerryCamera(PiCamera):
                 'Image format {} not supported'.format(image_format))
         self._image_format = image_format
 
-    def start_preview(self):
-        """Turns on camera preview"""
-        logger.info('Camera Preview - ON')
-        super().start_preview()
+    @property
+    def settings(self):
+        """Returns all camera parameter"""
+        settings = vars(self)
+        # Remove _ from @property values
+        for key in settings.keys():
+            if key.startswith('_'):
+                settings[key[1:]] = settings.pop(key)
+        return settings
 
-    def stop_preview(self):
-        """Turns off camera preview"""
-        logger.info('Camera Preview - OFF')
-        super().stop_preview()
+    def toggle_preview(self):
+        """Toggle camera preview"""
+        if self.preview is None:
+            logger.info('Camera Preview - ON')
+            super().start_preview()
+        else:
+            logger.info('Camera Preview - OFF')
+            super().stop_preview()
 
     def capture(self):
         """Capture image"""
@@ -86,6 +102,7 @@ class BerryCamera(PiCamera):
         logger.info('Capturing photo and saving to {}'.format(output))
         logger.debug('Camera Settings - {}'.format(repr(self)))
         super().capture(output, format=self.image_format)
+        return output
 
 
 camera_provider = providers.Singleton(BerryCamera)
