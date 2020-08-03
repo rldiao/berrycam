@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
 import Grid from '@material-ui/core/Grid'
-// import Exposure from './Exposure'
+import Exposure from './Exposure'
 import WhiteBalance from './WhiteBalance'
 import Axios from 'axios'
 
 export default class Settings extends Component {
   state = {
     "awb_modes": [],
-    "awb_mode": ""
+    "awb_mode": "",
+    "exposure_modes": [],
+    "exposure_mode": ""
   }
 
   componentDidMount() {
@@ -45,18 +47,18 @@ export default class Settings extends Component {
   render() {
     return (
       <Grid container spacing={2}>
-        {/* <Grid item xs={12}>
+        <Grid item xs={12}>
           <Exposure
-            options={this.state.exposure_modes}
+            exposureMode={this.state.exposure_mode}
+            exposureOptions={this.state.exposure_modes}
             onChange={this.handleSettingsChange}
-            awbMode={this.state.awb_mode}
           />
-        </Grid> */}
+        </Grid>
         <Grid item xs={12}>
           <WhiteBalance
+            awbMode={this.state.awb_mode}
             awbOptions={this.state.awb_modes}
             onChange={this.handleSettingsChange}
-            awbMode={this.state.awb_mode}
           />
         </Grid>
       </Grid>

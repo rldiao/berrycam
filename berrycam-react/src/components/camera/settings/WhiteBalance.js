@@ -9,7 +9,7 @@ function WhiteBalance(props) {
       <FormControl>
         <OptionSelector
           id="awb"
-          label="AWB"
+          label="AWB Mode"
           labelId="awb-label"
           name="awb_mode"
           options={props.awbOptions}
