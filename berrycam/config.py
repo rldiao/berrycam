@@ -1,7 +1,3 @@
-import logging
-from logging.config import dictConfig
-
-
 class BaseConfig:
     SECRET_KEY = 'GDtfDCFYjD'
 
