@@ -1,19 +1,19 @@
 import React, { Component } from 'react'
 import Grid from '@material-ui/core/Grid'
-import Exposure from './Exposure'
+// import Exposure from './Exposure'
 import WhiteBalance from './WhiteBalance'
 import Axios from 'axios'
 
 export default class Settings extends Component {
   state = {
-    "AWB_MODES": [],
+    "awb_modes": [],
     "awb_mode": ""
   }
 
   componentDidMount() {
     Axios.get("/api/camera/settings/options")
       .then(res => {
-        this.setState({"AWB_MODES": res.data.awb_modes})
+        this.setState(res.data)
       })
       .catch(e => {
         console.log(e)
@@ -21,7 +21,7 @@ export default class Settings extends Component {
     
     Axios.get("/api/camera/settings")
       .then(res => {
-        this.setState({"awb_mode": res.data.awb_mode})
+        this.setState(res.data)
       })
       .catch(e => {
         console.log(e)
@@ -45,12 +45,16 @@ export default class Settings extends Component {
   render() {
     return (
       <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Exposure></Exposure>
-        </Grid>
+        {/* <Grid item xs={12}>
+          <Exposure
+            options={this.state.exposure_modes}
+            onChange={this.handleSettingsChange}
+            awbMode={this.state.awb_mode}
+          />
+        </Grid> */}
         <Grid item xs={12}>
           <WhiteBalance
-            options={this.state.AWB_MODES}
+            awbOptions={this.state.awb_modes}
             onChange={this.handleSettingsChange}
             awbMode={this.state.awb_mode}
           />

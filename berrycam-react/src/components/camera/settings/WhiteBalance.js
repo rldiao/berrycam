@@ -12,7 +12,7 @@ function WhiteBalance(props) {
           label="AWB"
           labelId="awb-label"
           name="awb_mode"
-          options={props.options}
+          options={props.awbOptions}
           value={props.awbMode}
           onChange={props.onChange}
         />
@@ -22,7 +22,7 @@ function WhiteBalance(props) {
 }
 
 WhiteBalance.propTypes = {
-  options: PropTypes.array.isRequired,
+  awbOptions: PropTypes.array.isRequired,
   awbMode: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired
 }

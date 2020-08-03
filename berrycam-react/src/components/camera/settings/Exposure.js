@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { Slider, Typography, FormControl } from '@material-ui/core'
+// import OptionSelector from '../../common/OptionSelector'
 
 function Exposure(props) {
   return (
     <Fragment>
-      <Typography>Exposure</Typography>
+      {/* <Typography>Exposure</Typography>
       <Typography id="shutterspeed-slider" gutterBottom>
         Shutter Speed
                 </Typography>
@@ -29,24 +30,24 @@ function Exposure(props) {
         marks
         min={10}
         max={110}
-      />
-      <FormControl>
-        {/* <OptionSelector
-            id="awb"
-            label="AWB"
-            labelId="awb-label"
-            name="awb_mode"
-            options={this.state.AWB_MODES}
-            value={this.state.awb_mode}
-            onChange={this.handleSettingsChange}
-          /> */}
-      </FormControl>
+      /> */}
+      {/* <FormControl>
+        <OptionSelector
+            id="metermode-optionselector"
+            label="Mode Mode"
+            labelId="metermode-label"
+            name="meter_mode"
+            options={props.meterOptions}
+            value={props.meterValue}
+            onChange={this.onChange}
+          />
+      </FormControl> */}
     </Fragment>
   )
 }
 
 Exposure.propTypes = {
-
+  meterOptions: PropTypes.array.isRequired
 }
 
 export default Exposure

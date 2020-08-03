@@ -27,9 +27,9 @@ function OptionSelector(props) {
 }
 
 OptionSelector.propTypes = {
-  name: PropTypes.string.isRequired,
-  labelId: PropTypes.string,
   id: PropTypes.string,
+  labelId: PropTypes.string,
+  name: PropTypes.string.isRequired,
   value: PropTypes.any.isRequired,
   onChange: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired
