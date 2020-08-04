@@ -6,6 +6,7 @@ import logging
 from logging.config import dictConfig
 
 
+# FIXME: Logger is broken
 logging_config = dict(
     version=1,
     formatters={
@@ -40,8 +41,7 @@ def create_app():
     app.config.from_object('config.DevConfig')
 
     app.logger.info('Running BerryCam')
-    camera = camera_provider()
-    app.logger.info('Camera Status - {}'.format(not camera.closed))
+    app.logger.info('Camera Status - {}'.format(not camera_provider().closed))
 
     with app.app_context():
         # Import application components

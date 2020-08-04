@@ -1,5 +1,6 @@
 import os
 import io
+import inspect
 from dependency_injector import providers
 from datetime import datetime
 from time import sleep
@@ -44,7 +45,7 @@ class BerryCamera(PiCamera):
 
     def __repr__(self):
         # TODO: Improve this
-        return str(self.__dict__)
+        return str({**self.__dict__, **super().__dict__})
 
     @property
     def save_directory(self):
@@ -79,12 +80,61 @@ class BerryCamera(PiCamera):
     @property
     def settings(self):
         """Returns all camera parameter"""
-        settings = vars(self)
-        # Remove _ from @property values
-        for key in settings.keys():
-            if key.startswith('_'):
-                settings[key[1:]] = settings.pop(key)
-        return settings
+        return {
+            'analog_gain': str(self.analog_gain),
+            'annotate_background': str(self.annotate_background),
+            'annotate_foreground': str(self.annotate_foreground),
+            'annotate_frame_num': str(self.annotate_frame_num),
+            'annotate_text': str(self.annotate_text),
+            'annotate_text_size': str(self.annotate_text_size),
+            'awb_gains': str(self.awb_gains),
+            'awb_mode': str(self.awb_mode),
+            'brightness': str(self.brightness),
+            'clock_mode': str(self.clock_mode),
+            'closed': str(self.closed),
+            'color_effects': str(self.color_effects),
+            'contrast': str(self.contrast),
+            'crop': str(self.crop),
+            'digital_gain': str(self.digital_gain),
+            'drc_strength': str(self.drc_strength),
+            'exif_tags': str(self.exif_tags),
+            'exposure_compensation': str(self.exposure_compensation),
+            'exposure_mode': str(self.exposure_mode),
+            'exposure_speed': str(self.exposure_speed),
+            'flash_mode': str(self.flash_mode),
+            'framerate': str(self.framerate),
+            'framerate_delta': str(self.framerate_delta),
+            'framerate_range': str(self.framerate_range),
+            'hflip': str(self.hflip),
+            'image_denoise': str(self.image_denoise),
+            'image_effect': str(self.image_effect),
+            'image_effect_params': str(self.image_effect_params),
+            'image_format': str(self.image_format),
+            'iso': str(self.iso),
+            'meter_mode': str(self.meter_mode),
+            'overlays': str(self.overlays),
+            'preview': str(self.preview),
+            'preview_alpha': str(self.preview_alpha),
+            'preview_fullscreen': str(self.preview_fullscreen),
+            'preview_layer': str(self.preview_layer),
+            'preview_window': str(self.preview_window),
+            'previewing': str(self.previewing),
+            'raw_format': str(self.raw_format),
+            'recording': str(self.recording),
+            'resolution': str(self.resolution),
+            'revision': str(self.revision),
+            'rotation': str(self.rotation),
+            'saturation': str(self.saturation),
+            'save_directory': str(self.save_directory),
+            'sensor_mode': str(self.sensor_mode),
+            'sharpness': str(self.sharpness),
+            'shutter_speed': str(self.shutter_speed),
+            'still_stats': str(self.still_stats),
+            'vflip': str(self.vflip),
+            'video_denoise': str(self.video_denoise),
+            'video_stabilization': str(self.video_stabilization),
+            'zoom': str(self.zoom),
+        }
 
     def toggle_preview(self):
         """Toggle camera preview"""
@@ -94,6 +144,15 @@ class BerryCamera(PiCamera):
         else:
             logger.info('Camera Preview - OFF')
             super().stop_preview()
+
+    @property
+    def filename_format(self):
+        """Filenaming format string following python .format syntax"""
+        return self._filename_format
+
+    @filename_format.setter
+    def filename_format(self, filename_format: str):
+        self._filename_format = filename_format
 
     def capture(self):
         """Capture image"""
@@ -120,5 +179,15 @@ class BerryCamera(PiCamera):
             stream.seek(0)
             stream.truncate()
 
+        stream.close()
+        logger.info('Stream closed')
+
 
 camera_provider = providers.Singleton(BerryCamera)
+
+
+if __name__ == "__main__":
+    camera = BerryCamera()
+    for attr, _ in inspect.getmembers(BerryCamera, predicate=lambda obj: isinstance(obj, property)):
+        if attr not in ['frame', 'led', 'settings']:
+            print("'{}': str(self.{}),".format(attr, attr))

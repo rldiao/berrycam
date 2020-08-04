@@ -1,5 +1,8 @@
 from berrycam import create_app
+from berrycam import camera_provider
 
+# Initalise Camera
+camera_provider()
 
 app = create_app()
 

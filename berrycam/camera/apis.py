@@ -71,7 +71,7 @@ def capture():
         response['filename'] = camera_provider().capture()
     except Exception as e:
         response['error'] = {
-            'type': type(e),
+            'type': str(type(e)),
             'message': str(e)
         }
         status_code = 500
