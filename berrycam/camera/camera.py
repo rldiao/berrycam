@@ -45,7 +45,7 @@ class BerryCamera(PiCamera):
 
     def __repr__(self):
         # TODO: Improve this
-        return str({**self.__dict__, **super().__dict__})
+        return str(self.settings)
 
     @property
     def save_directory(self):
@@ -166,6 +166,7 @@ class BerryCamera(PiCamera):
         return output
 
     def get_frame(self):
+        """Frame generator"""
         # let camera warm up
         sleep(2)
 
@@ -179,15 +180,11 @@ class BerryCamera(PiCamera):
             stream.seek(0)
             stream.truncate()
 
-        stream.close()
-        logger.info('Stream closed')
-
 
 camera_provider = providers.Singleton(BerryCamera)
 
 
 if __name__ == "__main__":
     camera = BerryCamera()
-    for attr, _ in inspect.getmembers(BerryCamera, predicate=lambda obj: isinstance(obj, property)):
-        if attr not in ['frame', 'led', 'settings']:
-            print("'{}': str(self.{}),".format(attr, attr))
+    print(next(camera.get_frame()))
+    print(next(camera.get_frame()))

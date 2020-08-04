@@ -95,11 +95,9 @@ def index():
     )
 
 
-def gen():
-    for frame in camera_provider().get_frame():
-        yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n'+frame+b'\r\n')
-
-
 @camera_api_bp.route('/video_feed')
 def video_feed():
-    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    def gen():
+        for frame in camera_provider().get_frame():
+            yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n'+frame+b'\r\n')
+    return Response(gen(), status=200, mimetype='multipart/x-mixed-replace; boundary=frame')
