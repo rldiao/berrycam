@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, render_template_string, Response
+from flask import Blueprint, request, jsonify
 
 from berrycam.camera import camera_provider
 from berrycam.camera.helpers import invalid_settings
@@ -76,28 +76,3 @@ def capture():
         }
         status_code = 500
     return jsonify(response), status_code
-
-
-@camera_api_bp.route('/stream')
-def index():
-    return render_template_string(
-        """
-        <html>
-        <head>
-            <title>Video Streaming Demonstration</title>
-        </head>
-        <body>
-            <h1>Video Streaming Demonstration</h1>
-            <img src="{{ url_for('camera_api_bp.video_feed') }}">
-        </body>
-        </html>
-        """
-    )
-
-
-@camera_api_bp.route('/video_feed')
-def video_feed():
-    def gen():
-        for frame in camera_provider().get_frame():
-            yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n'+frame+b'\r\n')
-    return Response(gen(), status=200, mimetype='multipart/x-mixed-replace; boundary=frame')
