@@ -1,8 +1,2 @@
 # BerryCam
-
-## Run App
-```bash
-# Optional - Create virtualenv
-pip install -r requirement.txt
-python3 -m src.app
-```
+The goal of BerryCam is to make it easy for people setup a web server to interact with PiCamera.
